@@ -1,0 +1,321 @@
+---
+title: "Final Project"
+author: "DS Pros"
+date: "2024-03-21"
+output:
+  html_document: default
+---
+**Research Topic: Electric Vehicle Statistics in Washington**
+**Project Idea: Analyze electric vehicle consumers**
+
+**Team Members: Vedant Pungliya, Michaela Beck, Ekaterina Kurkalova**
+
+**Questions to be addressed: **
+
+1) What vehicle brand is most popular for consumers?  (top 20)
+  Histogram / bar chart showing the car brand and quantity purchased. 
+  Who dominates the EVs market? 
+  
+2) What brands are the trends for consumers over the years?  
+
+3) What brand has the highest fuel range? 
+   Is fuel range a selling point for consumers? 
+
+4) Average age of EV?
+   How has the electric range changed based on model year?
+   
+5)  Does the electric vehicle type matter to consumers BEV, PHEV? 
+    Which vehicle type has better electric range?
+
+   
+6) Compare zip codes with quantities of EVs within different areas of the city. 
+   Will demonstrate where in the city EVs are most popular?
+   
+
+   
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE,warning=FALSE}
+#install.packages("readr")
+#install.packages("dplyr")
+#install.packages("ggplot")
+
+
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(forcats)
+```
+
+
+
+```{r }
+
+ev_data <- read.csv("https://data.wa.gov/api/views/f6w7-q2d2/rows.csv?accessType=DOWNLOAD")
+str(ev_data)
+```
+
+
+```{r}
+
+ev_data <- ev_data %>%
+  select(-X2020.Census.Tract, -DOL.Vehicle.ID,-Legislative.District,-VIN..1.10.,-Electric.Utility)
+ev_data <- ev_data %>%
+  filter(State == "WA")
+head(ev_data)
+
+```
+
+
+
+**1. What vehicle brand is most popular for consumers? (top 20)
+  Histogram/bar chart showing the car brand and quantity purchased. 
+  Who dominates the EV market?**
+
+```{r}
+car_brand_counts <- table(ev_data$Make)
+
+car_brand_df <- as.data.frame(car_brand_counts)
+colnames(car_brand_df) <- c("Make", "Count")
+
+# Sort the car brands
+sorted_car_brands <- car_brand_df[order(-car_brand_df$Count), ]
+
+ggplot(data = sorted_car_brands[1:15, ], aes(x = reorder(Make, Count), y = Count)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Number of Purchases by Car Brand", x = "Car Brand", y = "Number of Purchases") +
+  theme(axis.text.x = element_text( vjust = 1)) +
+  coord_flip()
+```
+
+
+**You can see in the bar chart above that the Tesla car brand dominates the market. The number of EVs purchased from Tesla is nearly four times that of its leading competitors, with its number of car purchases reaching around 80,000. The next popular car brand from consumers next to Tesla is Nissan and Chevrolet. The number of cars on the market for Nissan and Chevrolet are very similar, with the number of purchases reported for the brands being around 15,000 each. The other car brands shown on the bar chart are all within a similar range of sales, between 1,000 and 10,000 for the leading car brands. **
+
+**Tesla dominates the electric vehicle market selling approximately 65,000 EVs than its leading competitor.  We can see in the sales comparison of the top 5 vehicle brands that Tesla is the most popular brand for EV consumers. Tesla’s competitors, BMW, Chevrolet, Ford, and Nissan, are all in a similar range of sales ranging from below 10,000 to just under 20,000 purchases.**
+
+
+**2. What brands are the trends for consumers over the years?**
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# Calculate sales count for each brand
+brand_sales <- ev_data %>%
+  group_by(Make) %>%
+  summarise(Sales = n()) %>%
+  arrange(desc(Sales))  # Sort by sales count in descending order
+
+# Get the top brands by sales (e.g., top 5 brands)
+top_brands <- head(brand_sales$Make, 5)
+
+# Filter the data to include only the top brands
+ev_data_top_brands <- ev_data %>%
+  filter(Make %in% top_brands)
+
+# Group the filtered data by Model.Year and Make, and calculate the count
+brand_trends <- ev_data_top_brands %>%
+  group_by(Model.Year, Make) %>%
+  summarise(Count = n()) %>%
+  ungroup()
+
+# Plot brand trends for top brands over the years
+ggplot(brand_trends, aes(x = Model.Year, y = Count, color = Make)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Brand Trends Over the Years for Top Brands",
+       x = "Model Year",
+       y = "Number of Models",
+       color = "Brand") +
+  theme_minimal()
+
+
+```
+
+**Over the years, many car brands have stayed consistent in their sales. Tesla has quickly risen in popularity. Around 2019, the number of sales took flight and increased significantly faster than its competitors. Based on the quick incline in Tesla’s sales, their electric vehicles appear to be what consumers are looking for and choosing over their competitors. It is worth noting Chevrolet had a spike in sales around 2019 but dropped back down to its regular levels a few years later.**
+
+
+**What brand has the highest fuel range? Is fuel range a selling point for consumers?**
+
+```{r}
+
+
+# Filter out rows where electric range is not 0 and group by brand and where sales are 1000 or more
+filtered_data <- ev_data %>%
+  filter(Electric.Range != 0) %>%
+  group_by(Make) %>%
+  filter(n() >= 1000) %>% 
+  summarise(Avg_Fuel_Range = mean(Electric.Range, na.rm = TRUE)) %>%
+  arrange(desc(Avg_Fuel_Range)) 
+
+ggplot(data = filtered_data[1:10, ], aes(x = reorder(Make, Avg_Fuel_Range), y = Avg_Fuel_Range)) +
+  geom_bar(stat = "identity", fill = "darkblue") +
+  labs(title = "Top Brands by Average Fuel Range", x = "Car Brand", y = "Average Fuel Range") +
+  theme(axis.text.x = element_text( vjust = 1)) +
+  coord_flip()
+
+
+
+```
+
+
+
+```{r}
+
+
+merged_data <- merge(filtered_data, car_brand_df, by = "Make", all.x = TRUE)
+
+lm_model <- lm(Count ~ Avg_Fuel_Range, data = merged_data)
+
+intercept <- coef(lm_model)[1]
+slope <- coef(lm_model)[2]
+
+correlation <- cor(merged_data$Count, merged_data$Avg_Fuel_Range)
+
+equation <- paste("y =", round(slope, 2), "x +", round(intercept, 2), "(R =", round(correlation, 2), ")")
+
+ggplot(data = merged_data, aes(x = Avg_Fuel_Range, y = Count, fill = Make)) +
+  geom_point(color = "blue", size = 3, shape = 21) +  # Using shape 21 for filled points
+  geom_text(x = max(merged_data$Avg_Fuel_Range), y = max(merged_data$Count), label = equation, hjust = 1.5, vjust = 1.5) +  # Adding equation text
+  labs(title = "Average Fuel Range vs Total Sales", x = "Average Fuel Range", y = "Total Sales", fill = "Make") +
+  theme_minimal() +
+  scale_fill_manual(values = rainbow(length(unique(merged_data$Make))))  # Filling points with different colors for each brand
+
+```
+
+**Out of the top brands for EVs, Tesla has the top average fuel range. We can see in the bar chart above that Tesla’s fuel range reaches nearly 250 miles while its next competitor, Chevrolet, has a fuel range of around 140. Based on the data, Tesla has a significantly more extensive average fuel range. Leading competitors like Volkswagen, Nissan, Kia, and Audi are similar, with around 90-120 miles of fuel range. Tesla’s fuel range is nearly double the fuel range of its competitors.** 
+**With Tesla having significantly higher sales than any other EV car brand, Tesla’s higher fuel range is likely a selling point for consumers.** 
+
+**We can see in the scatterplot above a positive relationship between Total Sales and Average Fuel Range. As the fuel range increases, the total number of sales increases as well. We can see the Tesla(Blue dot) at the top, with a significant distance between it and the leading car brands. The leading competitors, such as Nissan(Light Blue) and Chevrolet(white), are also moving in a positive direction upward, with the fuel range positively influencing the total sales.** 
+
+
+
+**4) What is the average age of EV?**
+**How has the 'Electric.Range' changed based on model year?**
+```{r}
+#Histogram of spread
+ggplot(ev_data, aes(x = Model.Year)) + geom_histogram(binwidth = 1, fill = "darkgreen") +
+  labs(title = "Model of EV's Recorded by Year", x = "Model Year", y = "Count")
+
+
+summary_data <- ev_data %>%
+  summarise(mean = mean(Model.Year),
+            median = median(Model.Year),
+            min = min(Model.Year),
+            max = max(Model.Year))
+
+summary_data
+
+#Boxplot of spread
+ggplot(ev_data, aes(x = Model.Year)) + geom_boxplot()
+
+```
+
+```{r}
+year_range <- ev_data %>%
+  filter(Electric.Range != 0) %>%
+  group_by(Model.Year) %>% 
+  summarise(Avg_Fuel_Range = mean(Electric.Range, na.rm = TRUE)) %>%
+  arrange(desc(Avg_Fuel_Range)) 
+
+ggplot(data = year_range, aes(x = reorder(Model.Year, Model.Year), y = Avg_Fuel_Range)) +
+  geom_bar(stat = "identity", fill = "darkred") +
+  labs(title = "Change in Electric Range by Year", x = "Model Year", y = "Average Fuel Range")
+```
+
+**The spread of EV model year is skewed left with a mode of cars being a 2023 model by around double the previous year. There was a small spike in sales of 2018 EV models shortly before the rapid increase began around 2021. The boxplot shows a clearer spread, with any model before 2013 being an outlier and the earliest model being before 2000. This gives the impression that EVs became popular around 2018 and also that there is potentially insufficient data for 2024 vehicles.**
+
+**Here we see the average electric range of electric vehicles for each model year. No consumers reported their electric range for 2011, 2004-2007, and 2009 models. The highest average electric range, in miles, is for the 2020 model which makes sense because the 2020 Tesla Model S has the highest reported range at 337 miles and has 76 instances, which brings the average up.**
+
+
+**5. Does the electric vehicle type matter to consumers? Which vehicle type has better electric range?** 
+
+```{r}
+
+ev_data$Electric.Vehicle.Type <- factor(ev_data$Electric.Vehicle.Type)
+
+levels(ev_data$Electric.Vehicle.Type)
+
+ggplot(ev_data, aes(x = Electric.Vehicle.Type)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Count of Electric Vehicle Types",
+       x = "Electric Vehicle Type",
+       y = "Count") +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::comma_format(scale = 1))
+
+```
+```{r}
+filtered_data <- ev_data %>%
+  filter(Electric.Range != 0 & !is.na(Electric.Vehicle.Type))
+# Create a box plot comparing electric range with vehicle type
+ggplot(filtered_data, aes(x = Electric.Vehicle.Type, y = Electric.Range, fill = Electric.Vehicle.Type)) +
+  geom_boxplot() +
+  labs(title = "Comparison of Electric Range by Vehicle Type",
+       x = "Vehicle Type",
+       y = "Electric Range") +
+  theme_minimal()
+
+```
+
+**Based on the bar chart most electric vehicles were Battery electric vehicles instead of Plug-in Hybrid electric vehicles. The amount of Battery Electric vehicles in the data was approximately three times that of Plug-in Hybrid electric vehicles. Because of this there is potential for further analysis in whether the vehicle type is a deciding factor for consumers.** 
+
+
+
+**6. How does location in Washington influence the amount of EVs?**
+
+```{r}
+library(leaflet)
+
+
+# Extract longitude and latitude from 'Vehicle.Location'
+ev_data <- ev_data %>%
+  mutate(
+    Longitude = as.numeric(gsub(".*\\((-?\\d+\\.\\d+) .*", "\\1", Vehicle.Location)),
+    Latitude = as.numeric(gsub(".* (-?\\d+\\.\\d+)\\)", "\\1", Vehicle.Location))
+  )
+```
+
+```{r}
+
+
+# Create a leaflet map and set the view to specific coordinates
+map <- leaflet() %>%
+  addTiles() %>%
+  setView(lng = -120.7401, lat = 47.25, zoom = 6.5)  # Set the view to the specified coordinates and zoom level
+
+# Add markers for each data point
+map <- map %>% addCircleMarkers(
+  data = ev_data,
+  lng = ~Longitude,  # Use the Longitude column from ev_data
+  lat = ~Latitude,   # Use the Latitude column from ev_data
+  radius = 0.5,      # Adjust the radius of markers as needed
+  color = "blue"
+)
+
+# Display the map
+map
+
+```
+
+**In Washington, there is a wide distribution of EVs across the state. Based on the map above, there is the greatest amount of EVs on the state’s western side in the Seattle and Tacoma area. The concentration of EVs follows along I-90 from the state capitol, Olympia, up to Everett. The areas with a high density of EVs are urban areas close to the northwestern coast of Washington. On the state’s eastern side, there is also a high concentration of EVs around Spokane.**
+**The map shows a high concentration of EVs in urban areas or larger cities with more people. In Washington state, the western side has the most significant EVs compared to the rest. **
+
+
+Q7) Price vs Range
+```{r}
+ev_data_price <- ev_data %>%
+  filter(Base.MSRP != 0)
+#head(ev_data_price)
+ggplot(ev_data_price, aes(x = Electric.Range)) +
+  geom_histogram(fill = 'steelblue', color = 'white', bins = 30) +  # Adjust bins as needed for the histogram
+  labs(title = 'Histogram of Electric Range',
+       x = 'Electric Range',
+       y = 'Frequency') +
+  scale_x_continuous(labels = comma_format(scale = 1)) +
+  scale_y_continuous(labels = comma_format(scale = 1e-1)) +
+  theme_minimal()
+
+```
