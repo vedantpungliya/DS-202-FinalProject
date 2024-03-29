@@ -57,6 +57,7 @@ ev_data <- read.csv("https://data.wa.gov/api/views/f6w7-q2d2/rows.csv?accessType
 str(ev_data)
 ```
 
+**Cleaning the data:** 
 
 ```{r}
 
@@ -68,6 +69,7 @@ head(ev_data)
 
 ```
 
+**We loaded and installed the libraries and packages necessary to perform our analysis. The libraries and packages included, ggplot2, tidyverse, dplyr, forcats, readr, and leaflet. Our data set was found on Data.Gov. It describes battery and plug- in hybrid electric vehicles registered through the Washington State Department of Licensing. We cleaned the data by filtering to only display vehicles still in Washington State. We removed the ‘X2020.Census.Tract’,  ‘DOL.Vehicle.ID’, ‘Legislative.District’, ‘VIN..1.10.’, and ‘Electric.Utility’ columns that were unnecessary for our analysis.**
 
 
 **1. What vehicle brand is most popular for consumers? (top 20)
@@ -262,7 +264,7 @@ ggplot(filtered_data, aes(x = Electric.Vehicle.Type, y = Electric.Range, fill = 
 
 **Based on the bar chart most electric vehicles were Battery electric vehicles instead of Plug-in Hybrid electric vehicles. The amount of Battery Electric vehicles in the data was approximately three times that of Plug-in Hybrid electric vehicles. Because of this there is potential for further analysis in whether the vehicle type is a deciding factor for consumers.** 
 
-
+**The box plot shows that Battery electric vehicles (BEV) have a better range than Plug-in Hybrid Electric vehicles (PHEV). However, the range of electric mileage is more spread out for BEV’s than PHEVs which means that hybrids have less variation in this category. The average range for BEVs is over 200 miles which is significantly more than the average PHEV range of approximately 25 miles. The box plot presents no outliers for BEVs while there are five outliers presented for PHEVs**
 
 **6. How does location in Washington influence the amount of EVs?**
 
@@ -309,13 +311,15 @@ Q7) Price vs Range
 ev_data_price <- ev_data %>%
   filter(Base.MSRP != 0)
 #head(ev_data_price)
-ggplot(ev_data_price, aes(x = Electric.Range)) +
-  geom_histogram(fill = 'steelblue', color = 'white', bins = 30) +  # Adjust bins as needed for the histogram
-  labs(title = 'Histogram of Electric Range',
-       x = 'Electric Range',
-       y = 'Frequency') +
-  scale_x_continuous(labels = comma_format(scale = 1)) +
-  scale_y_continuous(labels = comma_format(scale = 1e-1)) +
-  theme_minimal()
+library(scales)
 
+# Assuming 'Electric.Range' and 'Base.MSRP' are the column names in your ev_data_price dataframe
+ggplot(ev_data_price, aes(x = Electric.Range, y = Base.MSRP)) +
+  geom_point(color = 'steelblue') +
+  labs(title = 'Scatter Plot of Electric Range vs. Price',
+       x = 'Electric Range (10,000s)',
+       y = 'Price (10,000s)') +
+  scale_x_continuous(labels = comma_format(scale = 1e-4)) +
+  scale_y_continuous(labels = comma_format(scale = 1e-4)) +
+  theme_minimal()
 ```
