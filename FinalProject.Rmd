@@ -11,6 +11,10 @@ output:
 
 **Team Members: Vedant Pungliya, Michaela Beck, Ekaterina Kurkalova**
 
+**Introduction:**
+
+The goal of this project is to explore consumers' preferences when looking to purchase an electric vehicle. For this project, we focused on Washington State and analyzed electric cars registered through the Washington State Department of Licensing. In recent years, electric vehicles have become more popular and accessible. We aim to determine what factors are most important to consumers and what impacts their buying decision when shopping for a battery or plug-in hybrid electric vehicle. Our analysis will address consumer preferences regarding popular electric vehicle brands, trends over time, fuel range significance, average range and age of EVs, changes in electric range among top brands, the influence of EV type on consumer choices, and the impact of Washington state location on EV adoption rates.
+
 **Questions to be addressed: **
 
 1) What vehicle brand is most popular for consumers?  (top 20)
@@ -309,3 +313,8 @@ map
 
 **In Washington, there is a wide distribution of EVs across the state. Based on the map above, there is the greatest amount of EVs on the state’s western side in the Seattle and Tacoma area. The concentration of EVs follows along I-90 from the state capitol, Olympia, up to Everett. The areas with a high density of EVs are urban areas close to the northwestern coast of Washington. On the state’s eastern side, there is also a high concentration of EVs around Spokane.**
 **The map shows a high concentration of EVs in urban areas or larger cities with more people. In Washington state, the western side has the most significant EVs compared to the rest. **
+
+
+**Conclusion:**
+
+After modeling the electrical vehicle dataset of EVs registered by the Washington State Department of Licensing, we have better understood the trends in cars that people buy. Initially, we saw that brand is essential, with Tesla leading the market in recent years. That led us to consider which qualities made Tesla so appealing and found that, on average, Tesla cars had much better electrical fuel range. We also wanted to analyze the model year of EVs that people had purchased and found that models starting from the year 2021 are becoming a more and more popular option. This led us to wonder if EVs had improved over the years and compare the electric ranges of each model year. Surprisingly, the average fuel range of the vehicles in the dataset plummeted after the 2020 models, so we investigated if it had to do with the differences between hybrid (PHEV) and full electric (BEV) vehicles in recent years. Our suspicions were confirmed when we saw the extreme difference between the average electric range of BEVs against the range of PHEVs, which would significantly bring down the average range since averages are not robust against outliers. This conclusion left potential for further exploration of vehicle type preferences over the years since there were more fully electric cars in the dataset. Lastly, we also looked at the geographic spread of where people owned EVs, and it revealed sections concentrated in metropolitan centers, with fewer being in more rural parts of the state. Ultimately, we have better-understood consumer values and trends in EV qualities as the industry grows.
