@@ -3,8 +3,8 @@ title: "Final Project"
 author: "DS Pros"
 date: "2024-03-21"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 **Research Topic: Electric Vehicle Statistics in Washington**
 **Project Idea: Analyze electric vehicle consumers**
@@ -207,20 +207,12 @@ ggplot(ev_data, aes(x = Model.Year)) + geom_histogram(binwidth = 1, fill = "dark
   labs(title = "Model of EV's Recorded by Year", x = "Model Year", y = "Count")
 
 
-summary_data <- ev_data %>%
-  summarise(mean = mean(Model.Year),
-            median = median(Model.Year),
-            min = min(Model.Year),
-            max = max(Model.Year))
 
-summary_data
-
-#Boxplot of spread
-ggplot(ev_data, aes(x = Model.Year)) + geom_boxplot()
 
 ```
 
 **The spread of EV model year is skewed left with a mode of cars being a 2023 model by around double the previous year. There was a small spike in sales of 2018 EV models shortly before the rapid increase began around 2021. The boxplot shows a clearer spread, with any model before 2013 being an outlier and the earliest model being before 2000. This gives the impression that EVs became popular around 2018 and also that there is potentially insufficient data for 2024 vehicles.**
+
 
 ```{r,echo=FALSE,warning=FALSE}
 year_range <- ev_data %>%
@@ -231,7 +223,7 @@ year_range <- ev_data %>%
 
 ggplot(data = year_range, aes(x = reorder(Model.Year, Model.Year), y = Avg_Fuel_Range)) +
   geom_bar(stat = "identity", fill = "darkred") +
-  labs(title = "Change in Electric Range by Year", x = "Model Year", y = "Average Fuel Range")
+  labs(title = "Change in Electric Range by Year", x = "Model Year", y = "Average Fuel Range")+coord_flip()
 ```
 
 **Here we see the average electric range of electric vehicles for each model year. No consumers reported their electric range for 2011, 2004-2007, and 2009 models. The highest average electric range, in miles, is for the 2020 model which makes sense because the 2020 Tesla Model S has the highest reported range at 337 miles and has 76 instances, which brings the average up.**
@@ -313,6 +305,7 @@ map
 
 **In Washington, there is a wide distribution of EVs across the state. Based on the map above, there is the greatest amount of EVs on the state’s western side in the Seattle and Tacoma area. The concentration of EVs follows along I-90 from the state capitol, Olympia, up to Everett. The areas with a high density of EVs are urban areas close to the northwestern coast of Washington. On the state’s eastern side, there is also a high concentration of EVs around Spokane.**
 **The map shows a high concentration of EVs in urban areas or larger cities with more people. In Washington state, the western side has the most significant EVs compared to the rest. **
+
 
 
 **Conclusion:**
