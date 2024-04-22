@@ -11,7 +11,7 @@ output:
 
 **Team Members: Vedant Pungliya, Michaela Beck, Ekaterina Kurkalova**
 
-**Introduction:**
+*Introduction:*
 
 The goal of this project is to explore consumers' preferences when looking to purchase an electric vehicle. For this project, we focused on Washington State and analyzed electric cars registered through the Washington State Department of Licensing. In recent years, electric vehicles have become more popular and accessible. We aim to determine what factors are most important to consumers and what impacts their buying decision when shopping for a battery or plug-in hybrid electric vehicle. Our analysis will address consumer preferences regarding popular electric vehicle brands, trends over time, fuel range significance, average range and age of EVs, changes in electric range among top brands, the influence of EV type on consumer choices, and the impact of Washington state location on EV adoption rates.
 
