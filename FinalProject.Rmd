@@ -11,7 +11,7 @@ output:
 
 **Team Members: Vedant Pungliya, Michaela Beck, Ekaterina Kurkalova**
 
-*Introduction:*
+**Introduction:**
 
 The goal of this project is to explore consumers' preferences when looking to purchase an electric vehicle. For this project, we focused on Washington State and analyzed electric cars registered through the Washington State Department of Licensing. In recent years, electric vehicles have become more popular and accessible. We aim to determine what factors are most important to consumers and what impacts their buying decision when shopping for a battery or plug-in hybrid electric vehicle. Our analysis will address consumer preferences regarding popular electric vehicle brands, trends over time, fuel range significance, average range and age of EVs, changes in electric range among top brands, the influence of EV type on consumer choices, and the impact of Washington state location on EV adoption rates.
 
@@ -72,7 +72,7 @@ ev_data <- ev_data %>%
 ev_data <- ev_data %>%
   filter(State == "WA")
 head(ev_data)
-
+str(ev_data)
 ```
 
 **We loaded and installed the libraries and packages necessary to perform our analysis. The libraries and packages included, ggplot2, tidyverse, dplyr, forcats, readr, and leaflet. Our data set was found on Data.Gov. It describes battery and plug- in hybrid electric vehicles registered through the Washington State Department of Licensing. We cleaned the data by filtering to only display vehicles still in Washington State. We removed the ‘X2020.Census.Tract’,  ‘DOL.Vehicle.ID’, ‘Legislative.District’, ‘VIN..1.10.’, and ‘Electric.Utility’ columns that were unnecessary for our analysis.**
@@ -223,7 +223,7 @@ year_range <- ev_data %>%
 
 ggplot(data = year_range, aes(x = reorder(Model.Year, Model.Year), y = Avg_Fuel_Range)) +
   geom_bar(stat = "identity", fill = "darkred") +
-  labs(title = "Change in Electric Range by Year", x = "Model Year", y = "Average Fuel Range")+coord_flip()
+  labs(title = "Change in Electric Range by Year", x = "Model Year", y = "Average Fuel Range")
 ```
 
 **Here we see the average electric range of electric vehicles for each model year. No consumers reported their electric range for 2011, 2004-2007, and 2009 models. The highest average electric range, in miles, is for the 2020 model which makes sense because the 2020 Tesla Model S has the highest reported range at 337 miles and has 76 instances, which brings the average up.**
@@ -294,7 +294,7 @@ map <- map %>% addCircleMarkers(
   data = ev_data,
   lng = ~Longitude,  # Use the Longitude column from ev_data
   lat = ~Latitude,   # Use the Latitude column from ev_data
-  radius = 0.5,      # Adjust the radius of markers as needed
+  radius = 0.01,      # Adjust the radius of markers as needed
   color = "blue"
 )
 
