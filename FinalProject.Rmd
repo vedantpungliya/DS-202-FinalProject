@@ -61,6 +61,27 @@ library(forcats)
 ev_data <- read.csv("https://data.wa.gov/api/views/f6w7-q2d2/rows.csv?accessType=DOWNLOAD")
 str(ev_data)
 ```
+Here we have the variable description-
+
+1) VIN..1.10.: Vehicle Identification Number (VIN), a unique identifier for each vehicle.
+2) County: The county where the vehicle is registered.
+3) City: The city where the vehicle is registered.
+4) State: The state where the vehicle is registered.
+5) Postal.Code: The postal code of the vehicle's registration address.
+6) Model.Year: The year of the vehicle's model.
+7) Make: The manufacturer or brand of the vehicle.
+8) Model: The specific model of the vehicle.
+9) Electric.Vehicle.Type: Type of electric vehicle (e.g., Plug-in Hybrid Electric Vehicle, Battery Electric Vehicle).
+10) Clean.Alternative.Fuel.Vehicle..CAFV..Eligibility: Eligibility status for Clean Alternative Fuel Vehicle (CAFV) incentives.
+11) Electric.Range: The electric range of the vehicle in miles.
+12) Base.MSRP: The Manufacturer's Suggested Retail Price (MSRP) of the vehicle.
+13) Legislative.District: The legislative district associated with the vehicle's registration.
+14) DOL.Vehicle.ID: A unique identifier assigned by the Department of Licensing (DOL) for the vehicle.
+15) Vehicle.Location: Geographic coordinates (latitude and longitude) of the vehicle's location.
+16) Electric.Utility: The electric utility company associated with the vehicle.
+17) X2020.Census.Tract: The 2020 Census Tract code associated with the vehicle's location.
+
+
 \newpage
 
 **Cleaning the data:** 
@@ -76,6 +97,21 @@ str(ev_data)
 ```
 
 **We loaded and installed the libraries and packages necessary to perform our analysis. The libraries and packages included, ggplot2, tidyverse, dplyr, forcats, readr, and leaflet. Our data set was found on Data.Gov. It describes battery and plug- in hybrid electric vehicles registered through the Washington State Department of Licensing. We cleaned the data by filtering to only display vehicles still in Washington State. We removed the ‘X2020.Census.Tract’,  ‘DOL.Vehicle.ID’, ‘Legislative.District’, ‘VIN..1.10.’, and ‘Electric.Utility’ columns that were unnecessary for our analysis.**
+
+\newpage
+
+```{r}
+ev_data_2024 <- ev_data %>%
+  filter(Model.Year == 2024)
+
+total_sales_2024 <- nrow(ev_data_2024)
+
+print(total_sales_2024)
+
+```
+Anomalies:
+The year 2024 cannot be compared to other years since the dataset was uploaded in early 2024 and hence we do not have enough data. With the EV trend growing, the sales for 2024 should definitely be near or more than 2023.
+
 
 \newpage
 
